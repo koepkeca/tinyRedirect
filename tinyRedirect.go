@@ -8,19 +8,19 @@ import (
 )
 
 const (
-	//We use 1080 as the default port.
+	//DEFAULT_INPUT_PORT is the default setting for the listening port
 	DEFAULT_INPUT_PORT = "1080"
-	//We are using 302 as the default redirect type
+	//DEFAULT_REDIRECT_TYPE is the default setting for the http redirect code [301-309]
 	DEFAULT_REDIRECT_TYPE = http.StatusFound //this is 302..
-	//Default Redirect To, Just the programs github page
+	//DEFAULT_REDIRECT_TO is the default URL to redirect to
 	DEFAULT_REDIRECT_TO = "https://github.com/koepkeca/tinyRedirect"
-	//Environment variable for specifying listening port
+	//ENV_VAR_LISTEN_PORT is the name of the environment variable containing the listening port
 	ENV_VAR_LISTEN_PORT = "LISTEN_PORT"
-	//Environment variable for specifying listening address
+	//ENV_VAR_LISTEN_ADDR is the name of the environment variable containing the listening address
 	ENV_VAR_LISTEN_ADDR = "LISTEN_ADDR"
-	//Environment variable for specifying redirect type [301-309]
+	//ENV_VAR_REDIR_TYPE is the name of the environment variable containing the redirect type
 	ENV_VAR_REDIR_TYPE = "REDIR_TYPE"
-	//Environment variable for specifying redirect destination URL
+	//ENV_VAR_REDIR_DEST is the name of the environment variable  specifying redirect destination URL
 	ENV_VAR_REDIR_DEST = "REDIR_DEST"
 )
 
@@ -50,7 +50,7 @@ func (e EnvData) Parse() (c ServerConfig) {
 	return
 }
 
-// ServerConfig contains server configuration data
+//ServerConfig contains server configuration data
 type ServerConfig struct {
 	ListenString string
 	RedirType    int
@@ -58,9 +58,9 @@ type ServerConfig struct {
 	Logger       *log.Logger
 }
 
-// Run is the main entry point. If you're using daemontools or
-// docker you want to make sure this method continues running
-// and is not forked or run in a go routine.
+//Run is the main entry point. If you're using daemontools or
+//docker you want to make sure this method continues running
+//and is not forked or run in a go routine.
 func (c ServerConfig) Run() {
 	http.HandleFunc("/", c.redirector)
 	http.HandleFunc("/stat", c.statListener)
@@ -72,20 +72,20 @@ func (c ServerConfig) Run() {
 	return
 }
 
-// Redirect sends the redirect
+//Redirect sends the redirect
 func (c ServerConfig) redirector(w http.ResponseWriter, r *http.Request) {
 	c.Logger.Printf("Redirecting to: %s\n", c.RedirTo)
 	http.Redirect(w, r, c.RedirTo, c.RedirType)
 	return
 }
 
-// Poll responds with a HTTP 200, useful to see if the service is up
+//Poll responds with a HTTP 200, useful to see if the service is up
 func (c ServerConfig) statListener(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	return
 }
 
-// validateListenString validates and creates the connect string
+//validateListenString validates and creates the connect string
 func (c ServerConfig) validateListenString(a string, p string) (as string) {
 	if a != "" {
 		as = a
